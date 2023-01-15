@@ -18,8 +18,8 @@ nano /lib/systemd/system/b24rmq.service
 Description=B24RMQ
 After=network.target
 [Service]
-Environment="AMPQURL=amqp://bitrix:zY3eX8EnYc11Bo@general-mb-staging.boxberry.ru/staging-general"
-Environment="B24REST=https://crm.boxberry.ru/rest/"
+Environment="AMPQURL=amqp://login:pass@adr"
+Environment="B24REST=https://.../rest/"
 Environment="AMPQIN=bitrix24in"
 Environment="AMPQOUT=bitrix24out"
 Type=idle
@@ -56,8 +56,8 @@ sudo systemctl start b24rmq.service
 В очередь bitrix24in передаем
 Заголовки:
 method – название метода REST. Например crm.lead.add (добавление лида)
-user – пользователь из вебхука который мы вам предоставляли (https://crm.boxberry.ru/rest/1/3w0fbh3itlixzu1t/). в вашем случае 1
-token – токен из вебхука который мы вам предоставляли (https://crm.boxberry.ru/rest/1/3w0fbh3itlixzu1t/). в вашем случае 3w0fbh3itlixzu1t
+user – пользователь из вебхука который мы вам предоставляли (https://.../rest/1/3w0fbh...lixzu1t/). в вашем случае 1
+token – токен из вебхука который мы вам предоставляли (https://..../rest/1/3w0fbh3...zu1t/). в вашем случае 3w0fbh3itlixzu1t
 
 Параметры:
 message_id – уникальный идентификатор сообщения, он же возвращается и в ответе. по нему происходит сопоставление запроса с ответом
