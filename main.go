@@ -1,6 +1,3 @@
-//export AMPQURL=amqp://kxhvlgcc:H8mE5QBUDMTbS56qlI3xIB6ex4NjIUqQ@jackal.rmq.cloudamqp.com/kxhvlgcc
-//export B24REST=https://ntp.t2.ipg4you.com/rest/
-
 package main
 
 import (
@@ -59,10 +56,12 @@ func main() {
             message_id := msg.MessageId
             //content_type := msg.ContentType
             jsonData := []byte(string(msg.Body))
+            routing_key := msg.ReplyTo
             
             log.Printf("msg id: %s", string(message_id))
             log.Printf("msg method: %s", string(method))
 			log.Printf("msg request: %s", string(jsonData))
+            log.Printf("routing_key: %s", string(routing_key))
             
             if true {           //token && method && user && message_id && jsonData
                 urlAdr := b24restURL+"/"+user+"/"+token+"/"+method
@@ -73,7 +72,7 @@ func main() {
                 jsonBody, _ := ioutil.ReadAll(resp.Body)
                 log.Printf("msg response: %s", string(jsonBody))
 
-                errsend := sendCh.Publish("", ampqOUT, false, false, amqp.Publishing{
+                errsend := sendCh.Publish(ampqOUT, routing_key, false, false, amqp.Publishing{
                     ContentType: "text/json",
                     MessageId:   message_id,
                     Body:        []byte(jsonBody),
