@@ -5,37 +5,36 @@ import (
     "io/ioutil"
     "net/http"
     "os"
-	"log"
-	"sync"
-
-	"github.com/streadway/amqp"
-	"github.com/isayme/go-amqp-reconnect/rabbitmq"
+    "log"
+    "sync"
+    "github.com/streadway/amqp"
+    "github.com/isayme/go-amqp-reconnect/rabbitmq"
 )
 
 func main() {
-	rabbitmq.Debug = true
+    rabbitmq.Debug = true
     ampqURL := os.Getenv("AMPQURL") 
     b24restURL := os.Getenv("B24REST") 
     ampqIN := os.Getenv("AMPQIN") 
     ampqOUT := os.Getenv("AMPQOUT") 
     
-	conn, err := rabbitmq.Dial(ampqURL)
-	if err != nil {
-		log.Panic(err)
-	}
+    conn, err := rabbitmq.Dial(ampqURL)
+    if err != nil {
+        log.Panic(err)
+    }
 
-	consumeCh, err := conn.Channel()
-	if err != nil {
-		log.Panic(err)
-	}
+    consumeCh, err := conn.Channel()
+    if err != nil {
+        log.Panic(err)
+    }
     
     sendCh, err := conn.Channel()
-	if err != nil {
-		log.Panic(err)
-	}
+    if err != nil {
+        log.Panic(err)
+    }
 
-	go func() {
-		d, err := consumeCh.Consume(
+    go func() {
+        d, err := consumeCh.Consume(
             ampqIN, // queue
             "",     // consumer
             false,   // auto-ack
@@ -44,11 +43,11 @@ func main() {
             false,  // no-wait
             nil,    // args        
         )
-		if err != nil {
-			log.Panic(err)
-		}
+        if err != nil {
+            log.Panic(err)
+        }
 
-		for msg := range d {
+        for msg := range d {
             h := msg.Headers
             method, _ := h["method"].(string)
             token, _ := h["token"].(string)
@@ -60,7 +59,7 @@ func main() {
             
             log.Printf("msg id: %s", string(message_id))
             log.Printf("msg method: %s", string(method))
-			log.Printf("msg request: %s", string(jsonData))
+            log.Printf("msg request: %s", string(jsonData))
             log.Printf("routing_key: %s", string(routing_key))
             
             if true {           //token && method && user && message_id && jsonData
@@ -81,12 +80,12 @@ func main() {
                     log.Printf("Error publish: %v", errsend)
                 }                
             }          
-			msg.Ack(true)
-		}
-	}()
+            msg.Ack(true)
+        }
+    }()
 
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+    wg := sync.WaitGroup{}
+    wg.Add(1)
 
-	wg.Wait()
+    wg.Wait()
 }
